@@ -1,7 +1,7 @@
 
 
 import pyaudio
-import Queue
+import queue
 import threading
 import numpy as np
 from gcc_phat import gcc_phat
@@ -9,6 +9,8 @@ import math
 
 
 SOUND_SPEED = 343.2
+
+RATE = 48000
 
 MIC_DISTANCE_6P1 = 0.064
 MAX_TDOA_6P1 = MIC_DISTANCE_6P1 / float(SOUND_SPEED)
@@ -20,9 +22,9 @@ MAX_TDOA_4 = MIC_DISTANCE_4 / float(SOUND_SPEED)
 
 class MicArray(object):
 
-    def __init__(self, rate=16000, channels=8, chunk_size=None):
+    def __init__(self, rate=RATE, channels=8, chunk_size=None):
         self.pyaudio_instance = pyaudio.PyAudio()
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
         self.quit_event = threading.Event()
         self.channels = channels
         self.sample_rate = rate
@@ -151,7 +153,7 @@ def test_4mic():
 
     signal.signal(signal.SIGINT, signal_handler)
  
-    with MicArray(16000, 4, 16000 / 4)  as mic:
+    with MicArray(RATE, 4, RATE / 4)  as mic:
         for chunk in mic.read_chunks():
             direction = mic.get_direction(chunk)
             print(int(direction))
@@ -173,7 +175,7 @@ def test_8mic():
 
     signal.signal(signal.SIGINT, signal_handler)
  
-    with MicArray(16000, 8, 16000 / 4)  as mic:
+    with MicArray(RATE, 8, RATE / 8) as mic:
         for chunk in mic.read_chunks():
             direction = mic.get_direction(chunk)
             pixel_ring.set_direction(direction)

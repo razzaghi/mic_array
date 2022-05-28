@@ -89,7 +89,7 @@ class MicArray(object):
 
     def get_direction(self, buf):
         best_guess = None
-        if self.channels == 8:
+        if self.channels == 2:
             MIC_GROUP_N = 3
             MIC_GROUP = [[1, 4], [2, 5], [3, 6]]
 
@@ -98,7 +98,7 @@ class MicArray(object):
 
             # buf = np.fromstring(buf, dtype='int16')
             for i, v in enumerate(MIC_GROUP):
-                tau[i], _ = gcc_phat(buf[v[0]::8], buf[v[1]::8], fs=self.sample_rate, max_tau=MAX_TDOA_6P1, interp=1)
+                tau[i], _ = gcc_phat(buf[v[0]::2], buf[v[1]::2], fs=self.sample_rate, max_tau=MAX_TDOA_6P1, interp=1)
                 theta[i] = math.asin(tau[i] / MAX_TDOA_6P1) * 180 / math.pi
 
             min_index = np.argmin(np.abs(tau))
@@ -175,7 +175,7 @@ def test_8mic():
 
     signal.signal(signal.SIGINT, signal_handler)
  
-    with MicArray(RATE, 8, RATE / 8) as mic:
+    with MicArray(RATE, 2, RATE / 2) as mic:
         for chunk in mic.read_chunks():
             direction = mic.get_direction(chunk)
             pixel_ring.set_direction(direction)

@@ -179,7 +179,7 @@ def test_8mic():
         for chunk in mic.read_chunks():
             direction = mic.get_direction(chunk)
             pixel_ring.set_direction(direction)
-            print(int(direction))
+            print("Angle: " + str(int(direction)))
 
             if is_quit.is_set():
                 break
